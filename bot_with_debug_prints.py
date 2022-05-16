@@ -1,14 +1,13 @@
-import asyncio
-import aiohttp
-import aiogram
-from googlesearch import search
+# Pretty much the same, this is file with useful print's for debug.
+
+
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 from bs4 import BeautifulSoup
 import requests
 import random
-from keep_working import keep_alive
+
 HEADERS2 = {
     'accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     'referer': 'https://www.kinopoisk.ru/',
@@ -16,42 +15,35 @@ HEADERS2 = {
     'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36'
 }
 HEADERS = {
-    'cookie': 'yandexuid=9340739331645942432; yuidss=9340739331645942432; ymex=1961302432.yrts.1645942432#1961302432.yrtsi.1645942432; gdpr=0; _ym_uid=1645949360955899169; yandex_login=sergan3000; is_gdpr=0; is_gdpr_b=CLfGQxDTaSgC; my=YwA=; instruction=1; yandex_gid=214; _ym_d=1652247493; yabs-frequency=/5/0000000000000000/1LmOhY66wcE4HY4YxKy43AJ6ReH68m00/; computer=1; FgkKdCjPqoMFm=1; i=eJf5R2Xe26D/vvq4yYOijutNrz4PHcC/JH+sF6JJu/wwgQexUK94TSL2mRXblLjxNJtVXz3vbSkkUxonVk+h9D9h6sA=; Session_id=3:1652339649.5.0.1645969978890:lAuvXQ:2b.1.2:1|566715140.0.2|3:252225.951214.06mmpltrDR31BUJ4YdZdkomNM9c; sessionid2=3:1652339649.5.0.1645969978890:lAuvXQ:2b.1.2:1|566715140.0.2|3:252225.951214.06mmpltrDR31BUJ4YdZdkomNM9c; _ym_isad=1; skid=9152519791652354546; ys=udn.cDpzZXJnYW4zMDAw#c_chck.1364467225',
+    'cookie': 'mda_exp_enabled=1; yandex_login=pereg.sergey; yandexuid=6332085291630942024; gdpr=0; _ym_uid=1631552610117021587; yuidss=6332085291630942024; i=jokAsPWUvwFQUOZHFyS0Id80GhrYlA1cxLD9Yna/Ptzvrk1ffxcUadXggisvs8wJ9VcVKKmfetgRy4duAJIUe3ih/qk=; mykp_button=movies; my_perpages=%5B%5D; mustsee_sort_v5=00.10.200.21.31.41.121.131.51.61.71.81.91.101.111; _yasc=zc8bpKYWvvUMsPreMXXlLzTluWb8UymQSgMdZuOLJciW9g==; desktop_session_key=c57b0da9388339b2669b9ab39dbebc2db1bfdb764e31cb792b7d1d9a17e110377105942421d62f56928fa4bf026d7a0c943c2e889823bcbfc3d2005e6febfd47b9d6ab66c9e5cbcf0d79d1d47e65b904beb63cdcf5825bdb71d011990a5c12c1; desktop_session_key.sig=3rLO6UwxeeeKMaRxqPWyveoTsM0; ys=udn.cDrQodC10YDQs9C10Lkg0J/QtdGA0LXQs9GD0LTQvtCy#c_chck.2013928299; _csrf=f7PFD-bUKD-ezv2AIBCPJNHa; ya_sess_id=3:1652017915.5.0.1631216691905:xphX1Q:15.1.2:1|675380481.0.2|30:207067.260217.BqiPcq3apN9jVYnGBRCw4YCKswI; mda2_beacon=1652017915895; sso_status=sso.passport.yandex.ru:blocked; _ym_isad=1; yp=1652104330.yu.6332085291630942024; ymex=1654609930.oyu.6332085291630942024; location=1; PHPSESSID=5d22189297de7899eeb7fb054bdf85a9; user_country=ru; yandex_gid=10716; tc=5961; uid=15887248; crookie=AHpzlSzEido/MY3Xdyc2WLAIuPCw6C0Sf3542e+t3ahS7hSQBJi+v70RPDrTf+KicQf69LT4mtPC7I+uIKXjLoYGmZc=; cmtchd=MTY1MjAxNzk1MTczOA==; _csrf_csrf_token=9vr4DJ4yAepPwNdqjQMg_5fUk3RscWWCVGxncI4GkMo; mobile=no; _ym_visorc=b; _ym_d=1652025873',
     'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36'
 }
-bot = Bot(token='5285528755:AAEWKYjS0JyXqFhzaPhuBeEYo8sN62r8vvM')
+bot = Bot(token='5104064495:AAHA7MZhmh6INQE5J1MbyDFfE-Xe43CBcio')
 dp = Dispatcher(bot)
 
-
 def convert_link_to_soup(link):
-    response = requests.get(link, headers=HEADERS2)
+    response = requests.get(link, headers=HEADERS)
     soup = BeautifulSoup(response.content, "lxml")
     html = str(response.content)
     return html, soup
 
 
-# @dp.message_handler()
 def get_kinopoisk_html(message):
-    # response = requests.get("https://www.google.com/search?q=kinpoisk+forest+showshenck+redemption")
-    response = requests.get("https://www.google.com/search?q=kinpoisk+{}".format(message))
-    soup = BeautifulSoup(response.content, 'html.parser')
-    # print(response.encoding)
+    response = requests.get("https://www.google.com/search?q=kinpoisk+{}".format(message), headers=HEADERS)
     html = response.content.decode('ISO-8859-1')
-    # print(html)
     start = html.find("https://www.kinopoisk")
-    print(start)
-    i = start
-    print(i)
     end = html[start:].find('&')
-    print(html[start:start + end])
+    end = min(end, html[start:].find("\""))
+    print(html[start:start + end], "AAAAAAAAAAA")
     response = requests.get(html[start:start + end], headers=HEADERS)
     soup = BeautifulSoup(response.content, "lxml")
     html = str(response.content)
+    print(html)
     return html, soup
 
 
-def get_imdb_html(arg):
-    response = requests.get("https://www.google.com/search?q=imdb+inception")
+def get_imdb_html(message):
+    response = requests.get("https://www.google.com/search?q=imdb+{}".format(message), headers=HEADERS)
     soup = BeautifulSoup(response.content, "lxml")
     print(response.encoding)
     html = response.content.decode('ISO-8859-1')
@@ -81,9 +73,6 @@ def get_everything_about_movie(html, soup):
     except Exception:
         # await bot.send_message(message.chat.id, "I don't know this movie:(")
         raise "bad_request"
-
-    # except Exception:
-    #     await bot.send_message(message.chat.id, "Hm. There is no such movie!")
     markup = types.InlineKeyboardMarkup()
     lst = []
     ivi_link = get_ivi_link(html)
@@ -104,7 +93,7 @@ def get_everything_about_movie(html, soup):
     get_kion_link(html)
     get_appleTV(html)
     synopsis = get_synopsis(soup)
-    print(str(get_ivi_link(html)))
+    # print(str(get_ivi_link(html)))
     poster = get_poster(soup)
     return kinopoisk_rating, imdb_rating, poster, synopsis, markup
 
@@ -173,6 +162,8 @@ def get_poster(soup):
         result = soup.find("img",
                            class_="film-poster styles_root__24Jga styles_rootInDark__64LVq image styles_root__DZigd")
     return result.get("src")
+
+
 def writer(kp_rating, imdb_rating, synopsis):
     message = ""
     if (float(kp_rating) + float(imdb_rating)) / 2 >= 8.2:
@@ -180,6 +171,8 @@ def writer(kp_rating, imdb_rating, synopsis):
     message += "Рейтинг на Кинопоиске: " + kp_rating + '\n' + "Рейтинг на IMDB: " + imdb_rating + '\n' + 'Синопсис:\n'
     message += synopsis
     return message
+
+
 async def print_data_to_user(html, soup, message):
     try:
         kinopoisk_rating, imdb_rating = get_rating(html)
@@ -194,15 +187,16 @@ async def print_data_to_user(html, soup, message):
         await message.reply_photo("https:" + poster)
     print(synopsis)
     await bot.send_message(message.chat.id, writer(kinopoisk_rating, imdb_rating, synopsis), reply_markup=markup)
-@dp.message_handler(commands=["random_top_movie"])
-async def get_random_movie_from_top500(message):
 
+
+@dp.message_handler(commands=["recommend_me_a_good_movie"])
+async def get_random_movie_from_top500(message):
     rand = random.randint(1, 500)
     page_number = (rand - 1) // 50 + 1
-    response = requests.get("https://www.kinopoisk.ru/lists/movies/top500/?page=1".format(page_number), headers=HEADERS)
+    response = requests.get("https://www.kinopoisk.ru/lists/movies/top500/?page={}".format(page_number),
+                            headers=HEADERS)
     soup = BeautifulSoup(response.content, "lxml")
     print(rand)
-
     result = soup.find_all("div", class_="styles_main__Y8zDm styles_mainWithNotCollapsedBeforeSlot__x4cWo")[
         rand % 50].find("a", href=True).get("href")
     print("https://www.kinopoisk.ru" + result)
@@ -214,14 +208,18 @@ async def get_random_movie_from_top500(message):
     await print_data_to_user(html, soup, message)
 
 
-# @dp.message_handler(commands=["start"])
-# async def launch(message):
-# markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-# item1 = types.KeyboardButton('Watch at IVI')
-#
-# markup.add(item1)
-# await bot.send_message(message.chat.id, "You can find information about any movie you are interested in",
-#                        reply_markup=markup)
+@dp.message_handler(commands=["start"])
+async def launch(message):
+    await bot.send_message(message.chat.id,
+                           "Добро пожаловать!\n Вы можете запросить информацию по любому фильму. Для этого просто введите его название.\n"
+                           "Если Вы не знаете, что посмотреть, просто наберите /recommend_me_a_good_movie")
+
+
+@dp.message_handler(commands=["help"])
+async def launch(message):
+    await bot.send_message(message.chat.id,
+                           "Здесь вы можете запросить информацию по любому фильму. Для этого просто введите его название.\n"
+                           "Если Вы не знаете, что посмотреть, просто наберите /recommend_me_a_good_movie")
 
 
 @dp.message_handler(content_types=["text"])
@@ -237,6 +235,6 @@ async def launch(message):
 
     await print_data_to_user(html, soup, message)
 
-keep_alive()
+
 if __name__ == '__main__':
     executor.start_polling(dp)
